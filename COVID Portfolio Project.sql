@@ -15,6 +15,23 @@ From PortfolioProject..CovidDeaths$
 where location like '%states%'
 Order By 1,2
 
+Select Location, date, total_cases, new_cases, total_deaths, population	
+From PortfolioProject..CovidDeaths$
+Order By 1,2
+--Shows the likelihood of death after contracting covid
+Select Location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 as DeathPercentage
+From PortfolioProject..CovidDeaths$
+where location like '%states%'
+Order By 1,2
+
+
+--total cases vs population
+--shows what percentage of population got Covid
+Select Location, date, Population, total_cases, (total_cases/Population)*100 as CasePercentage
+From PortfolioProject..CovidDeaths$
+--where location like '%states%'
+Order By 1,2
+
 
 --Countries with highest infection rate compared to population
 Select Location, Population, MAX(total_cases) as HighestInfectionCount, MAX((total_cases/Population))*100 as CasePercentage
@@ -23,14 +40,26 @@ From PortfolioProject..CovidDeaths$
 Group by Location, Population
 Order By CasePercentage desc
 
---Countries with highest death count per Population
 
-Select Location, MAX(cast(Total_deaths as int)) as TotalDeathCount
+Select Location, Population, DATE, MAX(total_cases) as HighestInfectionCount, MAX((total_cases/Population))*100 as CasePercentage
 From PortfolioProject..CovidDeaths$
 --where location like '%states%'
-Where continent is not null
+Group by Location, Population, DATE
+Order By CasePercentage desc
+
+
+--Countries with highest death count per Population
+
+Select Location, SUM(cast(new_deaths as int)) as TotalDeathCount
+From PortfolioProject..CovidDeaths$
+--where location like '%states%'
+Where continent is null
+and location not in ('World', 'European Union', 'International')
+--and date <= '2021-04-29'
 Group by Location
 Order By TotalDeathCount desc
+
+select date from COVIDDeaths$
 
 --Total death count by continent
 Select continent, MAX(cast(Total_deaths as int)) as TotalDeathCount
